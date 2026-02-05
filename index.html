@@ -87,23 +87,29 @@
         // Function to attempt playing audio
         const playMusic = () => {
             bgMusic.play().then(() => {
-                // Once playing, remove the interaction listeners
+                // Remove all interaction listeners once music starts
+                window.removeEventListener('scroll', playMusic);
                 document.removeEventListener('click', playMusic);
                 document.removeEventListener('touchstart', playMusic);
+                document.removeEventListener('mousemove', playMusic);
             }).catch(error => {
-                console.log("Autoplay blocked, waiting for interaction.");
+                console.log("Waiting for user interaction to play audio...");
             });
         };
 
-        // Try playing immediately
+        // Aggressive event listeners to catch any first interaction
         window.addEventListener('load', playMusic);
-        // Fallback for browsers that block autoplay: play on first click/touch
         document.addEventListener('click', playMusic);
         document.addEventListener('touchstart', playMusic);
+        document.addEventListener('mousemove', playMusic, { once: true });
+        window.addEventListener('scroll', playMusic, { once: true });
 
         let isMoved = false;
 
         function moveButton() {
+            // Ensure music starts even if they just hover the 'No' button
+            playMusic();
+
             if (!isMoved) {
                 const rect = noBtn.getBoundingClientRect();
                 noBtn.style.left = `${rect.left}px`;
@@ -138,9 +144,7 @@
         });
 
         yesBtn.addEventListener('click', () => {
-            // Ensure music is playing even if it was previously paused/blocked
-            playMusic();
-            
+            playMusic(); // Final check to play
             questionContainer.classList.add('hidden');
             successContainer.classList.remove('hidden');
             successContainer.classList.add('flex');

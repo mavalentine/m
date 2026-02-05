@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>wach tkoon My Valentine?</title>
+    <link rel="icon" type="image/png" href="9alb.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600&display=swap');
+        
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fff5f5;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        .cursive {
+            font-family: 'Dancing Script', cursive;
+        }
+
+        #no-button {
+            transition: all 0.2s ease;
+            /* Starts as relative to stay in line, script changes it to fixed on first interaction */
+            position: relative; 
+        }
+
+        .heart {
+            position: fixed;
+            pointer-events: none;
+            animation: float 3s ease-in forwards;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100vh) scale(1.5); opacity: 0; }
+        }
+    </style>
+</head>
+<body class="flex flex-col items-center justify-center min-h-screen p-4">
+
+    <!-- Initial Question View -->
+    <div id="question-container" class="text-center w-full max-w-2xl space-y-12">
+        <div class="relative inline-block">
+            <span class="text-8xl">💝</span>
+            <div class="absolute -top-4 -right-4 animate-bounce text-4xl">✨</div>
+        </div>
+        
+        <h1 class="text-5xl md:text-7xl font-bold text-pink-600 cursive">
+            wach msali nhar 14?
+        </h1>
+
+        <!-- Buttons forced onto one line with flex-row and no wrapping -->
+        <div class="flex flex-row items-center justify-center gap-12 w-full pt-8">
+            <button id="yes-button" 
+                class="px-10 py-4 bg-pink-500 hover:bg-pink-600 text-white text-2xl font-bold rounded-full shadow-lg transform transition hover:scale-110 active:scale-95 whitespace-nowrap">
+               AH! 💖
+            </button>
+            
+            <button id="no-button" 
+                class="px-10 py-4 bg-gray-400 text-white text-2xl font-bold rounded-full shadow-lg z-50 whitespace-nowrap">
+                la
+            </button>
+        </div>
+    </div>
+
+    <!-- Success View -->
+    <div id="success-container" class="hidden text-center space-y-6">
+        <h1 class="text-6xl md:text-8xl font-bold text-pink-600 cursive animate-pulse">
+            ghaktakhower a oustadi gha katkhower! 🥰
+        </h1>
+        <div class="text-9xl mt-8">🤷</div>
+        <p class="text-pink-400 text-xl italic">iwa ach ghandiro daba?</p>
+    </div>
+
+    <script>
+        const noBtn = document.getElementById('no-button');
+        const yesBtn = document.getElementById('yes-button');
+        const questionContainer = document.getElementById('question-container');
+        const successContainer = document.getElementById('success-container');
+
+        let isMoved = false;
+
+        function moveButton() {
+            // On the very first move, switch from relative to fixed positioning
+            if (!isMoved) {
+                noBtn.style.position = 'fixed';
+                isMoved = true;
+            }
+
+            const padding = 20;
+            const btnWidth = noBtn.offsetWidth;
+            const btnHeight = noBtn.offsetHeight;
+            
+            const maxX = window.innerWidth - btnWidth - padding;
+            const maxY = window.innerHeight - btnHeight - padding;
+
+            const randomX = Math.floor(Math.random() * maxX);
+            const randomY = Math.floor(Math.random() * maxY);
+
+            noBtn.style.left = `${randomX}px`;
+            noBtn.style.top = `${randomY}px`;
+        }
+
+        // Trigger move on hover
+        noBtn.addEventListener('mouseover', moveButton);
+        
+        // Trigger move on touch
+        noBtn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            moveButton();
+        });
+
+        // Yes Button click handler
+        yesBtn.addEventListener('click', () => {
+            questionContainer.classList.add('hidden');
+            successContainer.classList.remove('hidden');
+            startHearts();
+        });
+
+        function startHearts() {
+            setInterval(() => {
+                const heart = document.createElement('div');
+                heart.innerHTML = ['❤️', '💖', '💘', '💕', '✨'][Math.floor(Math.random() * 5)];
+                heart.className = 'heart text-3xl';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.top = '100vh';
+                document.body.appendChild(heart);
+                
+                setTimeout(() => heart.remove(), 3000);
+            }, 150);
+        }
+    </script>
+</body>
+</html>

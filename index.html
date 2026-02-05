@@ -80,18 +80,36 @@
         const questionContainer = document.getElementById('question-container');
         const successContainer = document.getElementById('success-container');
 
+        // Global Audio instance
+        const bgMusic = new Audio('avec.mp3');
+        bgMusic.loop = true;
+
+        // Function to attempt playing audio
+        const playMusic = () => {
+            bgMusic.play().then(() => {
+                // Once playing, remove the interaction listeners
+                document.removeEventListener('click', playMusic);
+                document.removeEventListener('touchstart', playMusic);
+            }).catch(error => {
+                console.log("Autoplay blocked, waiting for interaction.");
+            });
+        };
+
+        // Try playing immediately
+        window.addEventListener('load', playMusic);
+        // Fallback for browsers that block autoplay: play on first click/touch
+        document.addEventListener('click', playMusic);
+        document.addEventListener('touchstart', playMusic);
+
         let isMoved = false;
 
         function moveButton() {
             if (!isMoved) {
-                // First capture current position to prevent "jump" effect when switching to fixed
                 const rect = noBtn.getBoundingClientRect();
                 noBtn.style.left = `${rect.left}px`;
                 noBtn.style.top = `${rect.top}px`;
                 noBtn.style.position = 'fixed';
                 isMoved = true;
-                
-                // Immediate second move to actually jump away
                 setTimeout(applyRandomPosition, 10);
             } else {
                 applyRandomPosition();
@@ -120,6 +138,9 @@
         });
 
         yesBtn.addEventListener('click', () => {
+            // Ensure music is playing even if it was previously paused/blocked
+            playMusic();
+            
             questionContainer.classList.add('hidden');
             successContainer.classList.remove('hidden');
             successContainer.classList.add('flex');

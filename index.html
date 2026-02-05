@@ -120,6 +120,10 @@
         });
 
         yesBtn.addEventListener('click', () => {
+            // Play sound
+            const audio = new Audio('avec.mp3');
+            audio.play().catch(error => console.log("Audio playback failed:", error));
+
             questionContainer.classList.add('hidden');
             successContainer.classList.remove('hidden');
             successContainer.classList.add('flex');
